@@ -107,10 +107,16 @@ pub async fn get_evaluate_pool(
         ),
     };
     emit(bootstrap.cell().into(), intermediate_output_path).await?;
+
+    let mut env = HashMap::new();
+    for (key, value) in std::env::vars() {
+        env.insert(key.clone(), value.clone());
+    }
+
     let pool = NodeJsPool::new(
         cwd,
         entrypoint,
-        HashMap::new(),
+        env,
         available_parallelism().map_or(1, |v| v.get()),
         debug,
     );
